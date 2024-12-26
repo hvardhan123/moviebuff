@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Movie</title>
+    <script src="bundle.js"></script>
+
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Card Container */
+        .profile-container {
+            background: #fff;
+            width: 400px;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        h1 {
+            color: #4facfe;
+            margin-bottom: 10px;
+        }
+
+        /* Form Input Styling */
+        .profile-input {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input, button {
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        /* Checkbox Styling */
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        button {
+            background: #4facfe;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #3581d8;
+        }
+
+        /* Go Back Button */
+        .go-back {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .go-back a {
+            display: inline-block;
+            padding: 10px 15px;
+            background: #ccc;
+            color: #333;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+
+        .go-back a:hover {
+            background: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <h1>Add Movie</h1>
+
+        <!-- Input Form -->
+        <div class="profile-input">
+            <!-- Location radio -->
+            <label for="name">Movie Name:</label>
+            <input type="text" id="name" name="name">
+            <label for="year">Movie Year:</label>
+            <input type="text" id="year" name="year">
+            <label for="location">Location:</label>
+            <div class="checkbox-group">
+                <label><input type="checkbox" name="location" value="India"> India</label>
+                <label><input type="checkbox" name="location" value="North America"> North America</label>
+                <label><input type="checkbox" name="location" value="China"> China</label>
+            </div>
+
+            <!-- Movie Genre Checkboxes -->
+            <label>Choose Movie Genres:</label>
+            <div class="checkbox-group">
+                <label><input type="checkbox" name="genre" value="Action"> Action</label>
+                <label><input type="checkbox" name="genre" value="Comedy"> Comedy</label>
+                <label><input type="checkbox" name="genre" value="Drama"> Drama</label>
+                <label><input type="checkbox" name="genre" value="Horror"> Horror</label>
+                <label><input type="checkbox" name="genre" value="Thriller"> Thriller</label>
+                <label><input type="checkbox" name="genre" value="Romance"> Romance</label>
+                <label><input type="checkbox" name="genre" value="Sci-Fi"> Sci-Fi</label>
+            </div>
+            <div class="movie-display" id="movieDisplay">
+            </div>
+    
+            <button onclick="showProfile()">Save Movie</button>
+
+        </div>
+       <!-- Go Back Button -->
+        <div class="go-back">
+            <a href="open.html">Go Back to Home</a>
+        </div>
+    </div>
+
+    <script>
+        // Function to Display Profile Information
+        function showProfile() {
+            const locationValues = [];
+            const GenreMap = new Map();
+
+            // Get input values
+            const locationElement = document.querySelectorAll('input[name="location"]:checked');
+            // Iterate through the checkboxes
+            locationElement.forEach((checkbox) => {
+            // If the checkbox is checked, add its value to the array
+            if (checkbox.checked) {
+                locationValues.push(checkbox.value);
+             }
+            });
+
+            // Get selected genres
+            const genreElements = document.querySelectorAll('input[name="genre"]:checked');
+            // Iterate over the checkboxes
+            genreElements.forEach((checkbox) => {
+            // Add the checkbox's ID and its checked status to the map
+            if (checkbox.checked) {
+                GenreMap.set(checkbox.value, "True");
+            }
+            });
+
+
+            const name = document.getElementById("name").value;
+            const year = document.getElementById("year").value;
+            
+            const movieProfile = {
+                "Name": name,
+                "Year": year,
+                "Location": locationValues,
+                "Genre": Object.fromEntries(GenreMap)
+            }
+            addMovie(movieProfile);
+        }
+    </script>
+</body>
+</html>

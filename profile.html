@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile Page</title>
+    <script src="bundle.js"></script>
+
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Card Container */
+        .profile-container {
+            background: #fff;
+            width: 400px;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        h1 {
+            color: #4facfe;
+            margin-bottom: 10px;
+        }
+
+        /* Form Input Styling */
+        .profile-input {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input, button {
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        /* Checkbox Styling */
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        /* Radio Button Styling */
+        .radio-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        button {
+            background: #4facfe;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #3581d8;
+        }
+
+        /* Display Profile Section */
+        .profile-display {
+            margin-top: 20px;
+            display: none;
+            text-align: left;
+        }
+
+        .profile-display h2 {
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .profile-display p {
+            margin: 5px 0;
+        }
+
+        /* Go Back Button */
+        .go-back {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .go-back a {
+            display: inline-block;
+            padding: 10px 15px;
+            background: #ccc;
+            color: #333;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+
+        .go-back a:hover {
+            background: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <h1>Create Your Profile</h1>
+
+        <!-- Input Form -->
+        <div class="profile-input">
+            <!-- Location radio -->
+            <label for="location">Location:</label>
+            <div class="radio-group">
+                <label><input type="radio" name="location" value="India"> India</label>
+                <label><input type="radio" name="location" value="North America"> North America</label>
+                <label><input type="radio" name="location" value="Britain"> Britain</label>
+            </div>
+
+            <!-- Movie Genre Checkboxes -->
+            <label>Choose Movie Genres:</label>
+            <div class="checkbox-group">
+                <label><input type="checkbox" name="genre" value="Action"> Action</label>
+                <label><input type="checkbox" name="genre" value="Comedy"> Comedy</label>
+                <label><input type="checkbox" name="genre" value="Drama"> Drama</label>
+                <label><input type="checkbox" name="genre" value="Horror"> Horror</label>
+                <label><input type="checkbox" name="genre" value="Thriller"> Thriller</label>
+                <label><input type="checkbox" name="genre" value="Romance"> Romance</label>
+                <label><input type="checkbox" name="genre" value="Sci-Fi"> Sci-Fi</label>
+            </div>
+
+            <button onclick="showProfile()">Save Profile</button>
+
+        </div>
+
+        <!-- Profile Display Section -->
+        <div class="profile-display" id="profileDisplay">
+            <h2>Your Profile</h2>
+            <p><strong>Location:</strong> <span id="displayLocation"></span></p>
+            <p><strong>Favorite Genres:</strong> <span id="displayGenres"></span></p>
+        </div>
+
+        <!-- Go Back Button -->
+        <div class="go-back">
+            <a href="open.html">Go Back to Home</a>
+        </div>
+    </div>
+
+    <script>
+        // Function to Display Profile Information
+        function showProfile() {
+            // Get input values
+            const locationElement = document.querySelector('input[name="location"]:checked');
+            const location = locationElement ? locationElement.value : "No Location selected";
+
+            // Get selected genres
+            const genreElements = document.querySelectorAll('input[name="genre"]:checked');
+            const genres = Array.from(genreElements).map(checkbox => checkbox.value);
+
+            // Set the display section with user input
+            document.getElementById('displayLocation').innerText = location;
+            document.getElementById('displayGenres').innerText = genres.join(', ');
+            
+            const userProfile = {
+                "Location": location,
+                "Genre": genres
+            }
+            setDocument(userProfile);
+            
+            // Show the profile display section
+            document.getElementById('profileDisplay').style.display = 'block';
+
+
+        }
+    </script>
+</body>
+</html>
