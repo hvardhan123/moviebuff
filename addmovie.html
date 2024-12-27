@@ -132,6 +132,8 @@
                 <label><input type="checkbox" name="genre" value="Romance"> Romance</label>
                 <label><input type="checkbox" name="genre" value="Sci-Fi"> Sci-Fi</label>
             </div>
+            <label for="year">Movie Rating:</label>
+            <input type="text" id="rating" name="rating">
             <div class="movie-display" id="movieDisplay">
             </div>
     
@@ -173,12 +175,14 @@
 
             const name = document.getElementById("name").value;
             const year = document.getElementById("year").value;
+            const rating = document.getElementById("rating").value;
             
             const movieProfile = {
                 "Name": name,
                 "Year": year,
                 "Location": locationValues,
-                "Genre": Object.fromEntries(GenreMap)
+                "Genre": Object.fromEntries(GenreMap),
+                "Rating": rating
             }
             addMovie(movieProfile);
         }

@@ -4,9 +4,10 @@
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, addDoc, doc, setDoc, query, where, onSnapshot, getDoc } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, addDoc, doc, setDoc, query, where, onSnapshot, getDoc, orderBy, limit } from 'firebase/firestore';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 
+// Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
   authDomain: process.env.REACT_APP_AUTH_DOMAIN,
@@ -118,7 +119,8 @@ async function getMovies() {
   for (let g = 0; g < getDetails.Genre.length; g++) {
     q = query(q, where("Genre." + getDetails.Genre[g], "==", "True"));
   }
-
+  q = query(q, orderBy("Rating", "desc"));
+  q = limit(10);
   // Attach a real-time listener
   const unsubscribe = onSnapshot(
     q,
@@ -144,6 +146,7 @@ async function getMovies() {
           <p><strong>Year:</strong> ${movie.Year}</p>
           <p><strong>Location:</strong> ${movie.Location}</p>
           <p><strong>Genre:</strong> ${genres}</p>
+          <p><strong>Rating:</strong>${movie.Rating}</p>
         `;
         movieContainer.appendChild(movieDiv);
       });
@@ -161,3 +164,4 @@ window.createSignIn = createSignIn;
 window.setDocument = setDocument;
 window.getMovies = getMovies;
 window.addMovie = addMovie;
+window.fetchUserDetails = fetchUserDetails;
