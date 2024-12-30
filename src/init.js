@@ -107,49 +107,60 @@ async function fetchUserDetails() {
   }
 }
 
+function updateUIRankedMovies(rankedMovies) {
+  const movieContainer = document.getElementById("movie-container");
+  movieContainer.innerHTML = "";
+  if (!rankedMovies.length) {
+    movieContainer.innerHTML = "<p>No movies found.</p>";
+    return;
+  }
+
+  rankedMovies.forEach((movie) => {
+    let locations = []
+    const movieDiv = document.createElement("div");
+    movieDiv.className = "movie";
+    const myMap = new Map(Object.entries(movie.Location));
+    for (let [key, value] of  myMap) {
+      if (value == "True") {
+        locations.push(key);
+      }
+    }
+    movieDiv.innerHTML = `
+      <h2>${movie.Name}</h2>
+      <p><strong>Year:</strong> ${movie.Year}</p>
+      <p><strong>Location:</strong> ${locations}</p>
+      <p><strong>Genre:</strong> ${movie.Genre}</p>
+      <p><strong>Rating:</strong>${movie.Rating}</p>
+      `;
+    movieContainer.appendChild(movieDiv);
+  });
+}
+
 async function getMovies() {
   const movieContainer = document.getElementById("movie-container");
-  let getDetails = await fetchUserDetails();
-  if (!getDetails) {
+  let userDetails = await fetchUserDetails();
+  if (!userDetails) {
     console.log("Unable to fetch user details");
     return;
   }
 
-  let q = query(collection(db, "movies"), where("Location", "array-contains", getDetails.Location));
-  for (let g = 0; g < getDetails.Genre.length; g++) {
-    q = query(q, where("Genre." + getDetails.Genre[g], "==", "True"));
-  }
+  let q = query(collection(db, "movies"), where("Genre", "array-contains-any", userDetails.Genre));
+  q = query(q, where("Location." + userDetails.Location, "==", "True"));
   q = query(q, orderBy("Rating", "desc"));
-  q = limit(10);
+  q = query(q, limit(10));
+
   // Attach a real-time listener
   const unsubscribe = onSnapshot(
     q,
     (querySnapshot) => {
-      movieContainer.innerHTML = "";
-      if (querySnapshot.empty) {
-        movieContainer.innerHTML = "<p>No movies found.</p>";
-        return;
-      }
+      const rankedMovies = [];
       querySnapshot.forEach((doc) => {
         const movie = doc.data();
-        const movieDiv = document.createElement("div");
-        movieDiv.className = "movie";
-        let genres = []
-        const myMap = new Map(Object.entries(movie.Genre));
-        for (let [key, value] of  myMap) {
-          if (value == "True") {
-            genres.push(key);
-          }
-        }
-        movieDiv.innerHTML = `
-          <h2>${movie.Name}</h2>
-          <p><strong>Year:</strong> ${movie.Year}</p>
-          <p><strong>Location:</strong> ${movie.Location}</p>
-          <p><strong>Genre:</strong> ${genres}</p>
-          <p><strong>Rating:</strong>${movie.Rating}</p>
-        `;
-        movieContainer.appendChild(movieDiv);
+        const score = userDetails.Genre.filter((genre) => movie.Genre.includes(genre)).length;
+        rankedMovies.push({id: doc.id, ...movie, score});
       });
+      rankedMovies.sort((a, b) => b.score - a.score);
+      updateUIRankedMovies(rankedMovies);
     },
     (error) => {
       console.error("Error retrieving query results:", error);

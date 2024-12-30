@@ -149,26 +149,26 @@
     <script>
         // Function to Display Profile Information
         function showProfile() {
-            const locationValues = [];
-            const GenreMap = new Map();
+            const locationMap = new Map();
+            const GenreValues = [];
 
             // Get input values
-            const locationElement = document.querySelectorAll('input[name="location"]:checked');
+            const genreElements = document.querySelectorAll('input[name="genre"]:checked');
             // Iterate through the checkboxes
-            locationElement.forEach((checkbox) => {
+            genreElements.forEach((checkbox) => {
             // If the checkbox is checked, add its value to the array
             if (checkbox.checked) {
-                locationValues.push(checkbox.value);
+                GenreValues.push(checkbox.value);
              }
             });
 
             // Get selected genres
-            const genreElements = document.querySelectorAll('input[name="genre"]:checked');
+            const locationElements = document.querySelectorAll('input[name="location"]:checked');
             // Iterate over the checkboxes
-            genreElements.forEach((checkbox) => {
+            locationElements.forEach((checkbox) => {
             // Add the checkbox's ID and its checked status to the map
             if (checkbox.checked) {
-                GenreMap.set(checkbox.value, "True");
+                locationMap.set(checkbox.value, "True");
             }
             });
 
@@ -180,8 +180,8 @@
             const movieProfile = {
                 "Name": name,
                 "Year": year,
-                "Location": locationValues,
-                "Genre": Object.fromEntries(GenreMap),
+                "Genre": GenreValues,
+                "Location": Object.fromEntries(locationMap),
                 "Rating": rating
             }
             addMovie(movieProfile);
