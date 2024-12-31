@@ -4,7 +4,7 @@
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, addDoc, doc, setDoc, query, where, onSnapshot, getDoc, orderBy, limit } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, addDoc, doc, setDoc, query, where, onSnapshot, getDoc, orderBy, limit, runTransaction } from 'firebase/firestore';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 
 // Your web app's Firebase configuration
@@ -126,11 +126,12 @@ function updateUIRankedMovies(rankedMovies) {
       }
     }
     movieDiv.innerHTML = `
-      <h2>${movie.Name}</h2>
-      <p><strong>Year:</strong> ${movie.Year}</p>
-      <p><strong>Location:</strong> ${locations}</p>
-      <p><strong>Genre:</strong> ${movie.Genre}</p>
-      <p><strong>Rating:</strong>${movie.Rating}</p>
+      <h2><a href="addreview.html?movieId=${movie.Name}">${movie.Name}</a></h2>
+      <p><strong>Year: </strong> ${movie.Year}</p>
+      <p><strong>Location: </strong> ${locations}</p>
+      <p><strong>Genre: </strong> ${movie.Genre}</p>
+      <p><strong>Rating: </strong>${movie.Rating}</p>
+      <p><strong>RatingCount: </strong>${movie.RatingCount}</p>
       `;
     movieContainer.appendChild(movieDiv);
   });
@@ -169,6 +170,50 @@ async function getMovies() {
   );
 }
 
+async function getMovieById(movieId) {
+  // Reference to the movie document
+  const movieRef = doc(db, "movies", movieId);
+  
+  try {
+    // Fetch the document snapshot
+    const docSnap = await getDoc(movieRef);
+    
+    if (docSnap.exists()) {
+      // If the document exists, get the data
+      const movieData = docSnap.data();
+      return movieData;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error("Error getting movie:", error);
+    return null;
+  }
+}
+
+async function addReview(movieId, review, rating) {
+  const movieRef = doc(db, 'movies', movieId);
+  let userName = sessionStorage.getItem("userName");
+  const ratingsRef = doc(db, "movies", movieId, "ratings", userName);
+  await runTransaction(db, async (transaction) => {
+    const movieDoc = await transaction.get(movieRef);
+    const movieData = movieDoc.data(); // Ensure this is accessed after the promise resolves
+    // Data to store
+    const ratingData = {
+      Rating: rating, // Store as a number
+      Review: review, // Store as a string
+      Timestamp: new Date(), // Add a timestamp
+    };
+    transaction.set(ratingsRef, ratingData);
+    // Update the movie document with the new rating and rating count
+    let overallRating = parseFloat(((movieData.Rating * movieData.RatingCount + rating) / (movieData.RatingCount + 1)).toFixed(2));
+    transaction.update(movieRef, {
+      Rating: overallRating,
+      RatingCount: movieData.RatingCount + 1,
+    });
+  });
+}
+
 window.addDocument = addDocument;
 window.doAuth = doAuth;
 window.createSignIn = createSignIn;
@@ -176,3 +221,5 @@ window.setDocument = setDocument;
 window.getMovies = getMovies;
 window.addMovie = addMovie;
 window.fetchUserDetails = fetchUserDetails;
+window.getMovieById = getMovieById;
+window.addReview = addReview;

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Movie Details</title>
+  <script src="bundle.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .movie-container {
+      max-width: 600px;
+      margin: auto;
+      border: 1px solid #ccc;
+      padding: 20px;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+    }
+    .rating-form {
+      margin-top: 20px;
+    }
+    .rating-form label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .rating-form input,
+    .rating-form textarea,
+    .rating-form button {
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 10px;
+      font-size: 14px;
+    }
+    .rating-form button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .rating-form button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="movie-container">
+    <h1 id="movie-title">Movie Title</h1>
+    <p id="movie-year"><strong>Year:</strong> </p>
+    <p id="movie-genre"><strong>Genre:</strong> </p>
+    <p id="movie-description"><strong>Description:</strong> </p>
+    <p id="overall-rating"><strong>Overall Rating:</strong> </p>
+
+    <h2>Add Your Rating and Review</h2>
+    <form id="rating-form" class="rating-form">
+      <label for="rating">Rating (1-5):</label>
+      <input type="number" id="rating" name="rating" min="1" max="5" required />
+      <label for="review">Your Review:</label>
+      <textarea id="review" name="review" rows="4" required></textarea>
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+  <!-- Go Back Button -->
+  <div class="go-back">
+    <a href="open.html">Go Back to Home</a>
+  </div>
+
+  <script>
+    // Fetch the movie ID from the query parameters
+        async function displayMovie(movieId) {
+            const movieData = await getMovieById(movieId);
+
+            // Populate movie details dynamically
+            document.getElementById("movie-title").textContent = movieId;
+            document.getElementById("movie-year").textContent = `Year: ${movieData.Year}`;
+            document.getElementById("movie-genre").textContent = `Genre: ${movieData.Genre}`;
+            document.getElementById("movie-description").textContent = `Description: PLOT`;
+            document.getElementById("overall-rating").textContent = `Overall Rating: ${movieData.Rating}`;
+
+            // Handle rating form submission
+            document.getElementById("rating-form").addEventListener("submit", async (e) => {
+                e.preventDefault();
+
+                const rating = parseFloat(document.getElementById("rating").value);
+                const review = document.getElementById("review").value;
+                if (rating < 1 || rating > 5) {
+                    alert("Please provide a rating between 1 and 5.");
+                    return;
+                }
+                
+                addReview(movieId, review, rating).then(()=> {
+                  // Reset the form after submission
+                  e.target.reset();
+                  alert("Thank you for your feedback!");
+                });
+            });
+        }
+        // Call the async function when the page loads
+        window.onload = async function () {
+
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const movieId = urlParams.get("movieId");
+            await displayMovie(movieId); // Wait for displayMovie to complete
+            console.log("Movie details displayed.");
+        };
+  </script>
+</body>
+</html>

@@ -175,14 +175,15 @@
 
             const name = document.getElementById("name").value;
             const year = document.getElementById("year").value;
-            const rating = document.getElementById("rating").value;
+            const rating = parseFloat(document.getElementById("rating").value);
             
             const movieProfile = {
                 "Name": name,
                 "Year": year,
                 "Genre": GenreValues,
                 "Location": Object.fromEntries(locationMap),
-                "Rating": rating
+                "Rating": rating,
+                "RatingCount": 1
             }
             addMovie(movieProfile);
         }
