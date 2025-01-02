@@ -9,6 +9,7 @@
     body {
       font-family: Arial, sans-serif;
       margin: 20px;
+      background: linear-gradient(135deg, #4facfe, #00f2fe); /* Gradient Background */
     }
     .movie-container {
       max-width: 600px;
@@ -43,6 +44,19 @@
     .rating-form button:hover {
       background-color: #0056b3;
     }
+
+    .go-back {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-decoration: none;
+    color: white;
+    background-color: #007bff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+  }
   </style>
 </head>
 <body>
@@ -52,11 +66,12 @@
     <p id="movie-genre"><strong>Genre:</strong> </p>
     <p id="movie-description"><strong>Description:</strong> </p>
     <p id="overall-rating"><strong>Overall Rating:</strong> </p>
+    <p id="movie-reviews"><a id="movie-link" target="_blank" href="#">Check Reviews...</a></p>
 
     <h2>Add Your Rating and Review</h2>
     <form id="rating-form" class="rating-form">
       <label for="rating">Rating (1-5):</label>
-      <input type="number" id="rating" name="rating" min="1" max="5" required />
+      <input type="text" id="rating" name="rating" min="1" max="5" required />
       <label for="review">Your Review:</label>
       <textarea id="review" name="review" rows="4" required></textarea>
       <button type="submit">Submit</button>
@@ -64,7 +79,7 @@
   </div>
   <!-- Go Back Button -->
   <div class="go-back">
-    <a href="open.html">Go Back to Home</a>
+    <a href="movie.html">Back to Movie List</a>
   </div>
 
   <script>
@@ -94,6 +109,7 @@
                   // Reset the form after submission
                   e.target.reset();
                   alert("Thank you for your feedback!");
+                  window.location.href = "movie.html";
                 });
             });
         }
@@ -103,6 +119,11 @@
             const queryString = window.location.search;
             const urlParams = new URLSearchParams(queryString);
             const movieId = urlParams.get("movieId");
+            const reviewURL = `getreviews.html?movieId=${movieId}`;
+            // Update the href of the link
+            const movieLink = document.getElementById("movie-link");
+            movieLink.href = reviewURL;  // Set the href attribute dynamically
+
             await displayMovie(movieId); // Wait for displayMovie to complete
             console.log("Movie details displayed.");
         };

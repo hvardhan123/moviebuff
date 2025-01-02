@@ -214,6 +214,37 @@ async function addReview(movieId, review, rating) {
   });
 }
 
+    // Fetch reviews for a movie
+    async function fetchReviews(movieId) {
+      try {
+        const reviewsList = document.getElementById("reviews-list");
+        reviewsList.innerHTML = ""; // Clear previous reviews
+
+        const reviewsRef = collection(db, "movies", movieId, "ratings");
+        const querySnapshot = await getDocs(reviewsRef);
+
+        querySnapshot.forEach((doc) => {
+          const review = doc.data();
+          const reviewDiv = document.createElement("div");
+          reviewDiv.className = "review";
+
+          reviewDiv.innerHTML = `
+            <p class="review-user">User ID:${doc.id}</p>
+            <p class="review-comment">Rating:${review.Rating}</p>
+            <p class="review-rating">${review.Review}</p>
+          `;
+          reviewsList.appendChild(reviewDiv);
+        });
+
+        if (querySnapshot.empty) {
+          reviewsList.innerHTML = "<p>No reviews yet.</p>";
+        }
+      } catch (error) {
+        console.error("Error fetching reviews:", error);
+      }
+    }
+
+
 window.addDocument = addDocument;
 window.doAuth = doAuth;
 window.createSignIn = createSignIn;
@@ -223,3 +254,4 @@ window.addMovie = addMovie;
 window.fetchUserDetails = fetchUserDetails;
 window.getMovieById = getMovieById;
 window.addReview = addReview;
+window.fetchReviews = fetchReviews;
